@@ -1,0 +1,9 @@
+Apple,100,0.50
+Banana,150,0.30
+Orange,200,0.80
+Grapes,50,2.00
+Milk,80,1.20
+Bread,60,1.00
+Coconut,500,100.0
+Rasgulla,1000,600.0
+Nuts,500,700.0
