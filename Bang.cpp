@@ -61,5 +61,7 @@ int main(int argc, char *argv[]) {
     std::string scriptPath = argv[1];
     parseAndExecute(scriptPath);
 
+std::string interpreter = "/home/codespace/.python/current/bin/python3";
+
     return EXIT_SUCCESS;
 }
