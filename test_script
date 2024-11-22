@@ -1,2 +1,2 @@
-@!/usr/bin/env python3
+@!/home/codespace/.python/current/bin/python3
 print("Hello from @! script!")
