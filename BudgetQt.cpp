@@ -1,4 +1,4 @@
-#include "BudgetPlanner.hpp"
+#include "include/BudgetPlanner.hpp"
 #include <QApplication>
 
 int main(int argc, char *argv[]) {
