@@ -1,0 +1,4 @@
+/workspaces/Notepad/build/CMakeFiles/rebuild_cache.dir
+/workspaces/Notepad/build/CMakeFiles/edit_cache.dir
+/workspaces/Notepad/build/CMakeFiles/Notepad.dir
+/workspaces/Notepad/build/CMakeFiles/Notepad_autogen.dir
