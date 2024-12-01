@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Mandelbulb - Three.js</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    // Scene, Camera, Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Orbit Controls for Interactivity
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    // Mandelbulb Parameters
+    const maxIterations = 15;
+    const power = 8;
+    const scale = 1.5;
+    const size = 200; // Higher resolution for finer details
+
+    // Mandelbulb Function
+    function mandelbulb(x, y, z) {
+      let zx = x, zy = y, zz = z;
+      let r = 0.0;
+
+      for (let i = 0; i < maxIterations; i++) {
+        r = Math.sqrt(zx * zx + zy * zy + zz * zz);
+        if (r > 2.0) return i;
+
+        // Convert to spherical coordinates
+        const theta = Math.atan2(Math.sqrt(zx * zx + zy * zy), zz) * power;
+        const phi = Math.atan2(zy, zx) * power;
+        const rPower = Math.pow(r, power);
+
+        // Update Cartesian coordinates
+        zx = rPower * Math.sin(theta) * Math.cos(phi) + x;
+        zy = rPower * Math.sin(theta) * Math.sin(phi) + y;
+        zz = rPower * Math.cos(theta) + z;
+      }
+
+      return maxIterations; // Return max iterations for points inside the Mandelbulb
+    }
+
+    // Generate Mandelbulb Points
+    const points = [];
+    const colors = [];
+    for (let x = -size; x < size; x += 1) {
+      for (let y = -size; y < size; y += 1) {
+        for (let z = -size; z < size; z += 1) {
+          const nx = (x / size) * scale;
+          const ny = (y / size) * scale;
+          const nz = (z / size) * scale;
+
+          const iteration = mandelbulb(nx, ny, nz);
+          if (iteration < maxIterations) {
+            points.push(nx, ny, nz);
+
+            // Dynamic coloring based on iteration count
+            const colorValue = iteration / maxIterations;
+            colors.push(colorValue, 0.5, 1.0 - colorValue);
+          }
+        }
+      }
+    }
+
+    // Create Point Cloud
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: 0.01,
+      vertexColors: true,
+    });
+
+    const pointCloud = new THREE.Points(geometry, material);
+    scene.add(pointCloud);
+
+    // Lighting for better depth perception
+    const light = new THREE.PointLight(0xffffff, 1, 50);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+
+    // Camera Position
+    camera.position.z = 4;
+
+    // Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      pointCloud.rotation.y += 0.005; // Smooth rotation
+      controls.update();
+
+      renderer.render(scene, camera);
+    }
+
+    // Handle Window Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Start Animation
+    animate();
+  </script>
+</body>
+</html>

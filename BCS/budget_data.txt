@@ -1,0 +1,6 @@
+Budget: Rs500
+Total Expenses: Rs400
+Remaining Budget: Rs100
+----- Expenses -----
+Shopping: Rs400
+Shopping: Rs400

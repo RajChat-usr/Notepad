@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Brick Wall - Three.js</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script>
+    // Scene, Camera, Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    // Add Ambient and Directional Light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(5, 10, 7);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
+
+    // Ground Plane
+    const groundGeometry = new THREE.PlaneGeometry(20, 20);
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.5;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // Brick Texture and Material
+    const loader = new THREE.TextureLoader();
+    const brickTexture = loader.load('https://threejs.org/examples/textures/brick_diffuse.jpg');
+    const brickBump = loader.load('https://threejs.org/examples/textures/brick_bump.jpg');
+
+    const brickMaterial = new THREE.MeshStandardMaterial({
+      map: brickTexture,
+      bumpMap: brickBump,
+      bumpScale: 0.2,
+    });
+
+    // Brick Wall
+    const brickWidth = 1;
+    const brickHeight = 0.5;
+    const brickDepth = 0.3;
+
+    const wallWidth = 10;
+    const wallHeight = 5;
+
+    for (let row = 0; row < wallHeight; row++) {
+      for (let col = 0; col < wallWidth; col++) {
+        const offset = row % 2 === 0 ? 0 : brickWidth / 2;
+
+        const brick = new THREE.Mesh(
+          new THREE.BoxGeometry(brickWidth, brickHeight, brickDepth),
+          brickMaterial
+        );
+
+        brick.position.set(
+          col * brickWidth - (wallWidth * brickWidth) / 2 + offset,
+          row * brickHeight - (wallHeight * brickHeight) / 2,
+          0
+        );
+
+        brick.castShadow = true;
+        scene.add(brick);
+      }
+    }
+
+    // Camera Position
+    camera.position.set(5, 5, 15);
+    camera.lookAt(0, 0, 0);
+
+    // Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+
+    // Handle Window Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Start Animation
+    animate();
+  </script>
+</body>
+</html>
