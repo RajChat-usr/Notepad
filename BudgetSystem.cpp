@@ -124,16 +124,17 @@ void SetBudget() {
 
 void AddExpense() {
     std::string description = txtExpenseDesc.getString().toAnsiString();
-    double expenseAmount;
-    if (std::stod(txtExpenseAmount.getString().toAnsiString(), &expenseAmount)) {
+    double expenseAmount = 0.0;
+    
+    try {
+        expenseAmount = std::stod(txtExpenseAmount.getString().toAnsiString());
         totalExpense += expenseAmount;
         expenses.push_back(description + ": " + currency + std::to_string(expenseAmount));
         lblTotalExpense.setString("Total Expenses: " + currency + std::to_string(totalExpense));
         lblRemainingBudget.setString("Remaining Budget: " + currency + std::to_string(budget - totalExpense));
-    }
-    else {
-        // Handle invalid expense amount
-        MessageBox::Show("Invalid amount. Please enter a valid number.");
+    } catch (const std::invalid_argument& e) {
+        // Handle invalid amount input
+        std::cout << "Invalid amount. Please enter a valid number." << std::endl;
     }
 }
 
