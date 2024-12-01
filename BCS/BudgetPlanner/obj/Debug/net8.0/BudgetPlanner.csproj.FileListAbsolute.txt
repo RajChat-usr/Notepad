@@ -1,0 +1,5 @@
+/workspaces/Notepad/BCS/BudgetPlanner/obj/Debug/net8.0/BudgetPlanner.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/Notepad/BCS/BudgetPlanner/obj/Debug/net8.0/BudgetPlanner.AssemblyInfoInputs.cache
+/workspaces/Notepad/BCS/BudgetPlanner/obj/Debug/net8.0/BudgetPlanner.AssemblyInfo.cs
+/workspaces/Notepad/BCS/BudgetPlanner/obj/Debug/net8.0/BudgetPlanner.csproj.CoreCompileInputs.cache
+/workspaces/Notepad/BCS/BudgetPlanner/obj/Debug/net8.0/BudgetPlanner.sourcelink.json
