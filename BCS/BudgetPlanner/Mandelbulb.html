@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mandelbulb - Three.js</title>
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+  <script>
+    // 1. Scene, Camera, and Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // 2. Mandelbulb Parameters
+    const maxIterations = 10;
+    const power = 8;
+    const scale = 1.5;
+
+    // 3. Mandelbulb Function
+    function mandelbulb(x, y, z) {
+      let zx = x, zy = y, zz = z;
+      let dr = 1.0, r = 0.0;
+
+      for (let i = 0; i < maxIterations; i++) {
+        r = Math.sqrt(zx * zx + zy * zy + zz * zz);
+        if (r > 2.0) break;
+
+        // Convert to spherical coordinates
+        const theta = Math.atan2(Math.sqrt(zx * zx + zy * zy), zz) * power;
+        const phi = Math.atan2(zy, zx) * power;
+        dr = Math.pow(r, power - 1.0) * power * dr;
+        const rPower = Math.pow(r, power);
+
+        // Update Cartesian coordinates
+        zx = rPower * Math.sin(theta) * Math.cos(phi) + x;
+        zy = rPower * Math.sin(theta) * Math.sin(phi) + y;
+        zz = rPower * Math.cos(theta) + z;
+      }
+
+      return r;
+    }
+
+    // 4. Generate Mandelbulb Points
+    const points = [];
+    const size = 100; // Resolution of the Mandelbulb
+
+    for (let x = -size; x < size; x += 1) {
+      for (let y = -size; y < size; y += 1) {
+        for (let z = -size; z < size; z += 1) {
+          const nx = (x / size) * scale;
+          const ny = (y / size) * scale;
+          const nz = (z / size) * scale;
+
+          const distance = mandelbulb(nx, ny, nz);
+          if (distance < 2.0) {
+            points.push(nx, ny, nz);
+          }
+        }
+      }
+    }
+
+    // 5. Create Point Cloud
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+    const material = new THREE.PointsMaterial({ color: 0xff8800, size: 0.02 });
+    const pointCloud = new THREE.Points(geometry, material);
+    scene.add(pointCloud);
+
+    // 6. Camera Position
+    camera.position.z = 5;
+
+    // 7. Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      pointCloud.rotation.y += 0.01;
+
+      renderer.render(scene, camera);
+    }
+
+    // Start Animation
+    animate();
+  </script>
+</body>
+</html>
